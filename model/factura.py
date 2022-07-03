@@ -20,4 +20,4 @@ class Factura:
         object.__setattr__(self, 'sort_index', self.Total)
 
     def to_csv_format(self):
-        return f"{self.NIT_Emisor},{self.Numero_Factura},{self.Numero_Autorizacion},{self.Fecha_Emision},{self.Total},{self.Importe_Credito_Fiscal},{self.Codigo_Control},{self.NIT_Comprador},{self.Import_ICE_IEHD_TASAS},{self.Importe_ventas_No_Gravadas},{self.Importe_No_Sujeto_Credito_Fiscal},{self.Bonificaciones_Rebajas}\n"
+        return f"{self.NIT_Emisor},{self.Numero_Factura},{self.Numero_Autorizacion},{self.Fecha_Emision},{self.Total},{self.Importe_Credito_Fiscal},{self.Codigo_Control},{self.NIT_Comprador},{self.Import_ICE_IEHD_TASAS},{self.Importe_ventas_No_Gravadas},{self.Importe_No_Sujeto_Credito_Fiscal},{self.Bonificaciones_Rebajas}"

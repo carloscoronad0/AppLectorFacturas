@@ -1,9 +1,6 @@
-from os.path import exists
+from enum import Enum
 
-class Documento:
-    def __init__(self, path):
-        self.path = path
-        self.file_created = exists(path)
-
-    def write_to_document(self):
-        if self.file_created:
+class AccionesDocumento(Enum):
+    CrearYEscribirDocumento = 1
+    SobreEscribirDocumento = 2
+    AgregarADocumento = 3

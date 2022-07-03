@@ -4,7 +4,7 @@ import numpy as np
 from pyzbar import pyzbar
 from pyzbar.pyzbar import ZBarSymbol
 from typing import List
-from os.path import exists
+from os.path import isdir
 from os.path import splitext
 from os.path import join
 from os import walk
@@ -18,8 +18,11 @@ class ControlFacturas:
         self.name: str = control_name
         self.control: List[Factura] = []
 
+    def __get_barcodes__(self, item):
+        return pyzbar.decode(item, symbols=[ZBarSymbol.QRCODE])
+
     def add_from_folder(self, path):
-        if exists(path):
+        if isdir(path):
             filenames = next(walk(path), (None, None, []))[2]
 
             # Iterating over the files
@@ -29,14 +32,38 @@ class ControlFacturas:
                 # If the file is valid (It's an image)
                 if ext in ACCEPTED_EXTENSIONS:
                     complete_path = join(path, f)
-                    self._save_from_barcodes(complete_path)
-            for fac in self.control:
-                print(fac)
+                    barcodes = self.__get_barcodes__(cv2.imread(complete_path))
+
+                    if len(barcodes) > 0:
+                        self.__save_from_barcodes__(barcodes)
+                    else:
+                        print(f"No barcodes found in {f}")
+
+            # for fac in self.control:
+                # print(fac)
         else:
             raise ValueError('Not a valid path')
 
-    def _save_from_barcodes(self, path):
-        barcodes = pyzbar.decode(cv2.imread(path), symbols=[ZBarSymbol.QRCODE])
+    def add_from_camera(self):
+        camera = cv2.VideoCapture(0)
+        show_pic = True
+
+        while show_pic:
+            ret, frame = camera.read()
+            cv2.imshow('Lector QR', frame)
+            barcodes = self.__get_barcodes__(frame)
+
+            if len(barcodes) > 0:
+                self.__save_from_barcodes__(barcodes)
+                show_pic = False
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        camera.release()
+        cv2.destroyAllWindows()
+
+    def __save_from_barcodes__(self, barcodes):
         for barcode in barcodes:
             barcode_fields = barcode.data.decode('utf-8').split('|')
 
